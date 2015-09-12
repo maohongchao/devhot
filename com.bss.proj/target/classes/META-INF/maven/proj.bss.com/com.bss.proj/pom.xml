@@ -1,0 +1,170 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	     
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>proj.bss.com</groupId>
+  <artifactId>com.bss.proj</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>StudySpring</name>
+  <description>StudySpringNewFeature</description>
+  
+  <dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-framework-bom</artifactId>
+            <version>4.1.0.RELEASE</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+  	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-context</artifactId>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-core</artifactId>
+	</dependency>
+
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-beans</artifactId>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-aop</artifactId>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.aspectj</groupId>
+		<artifactId>aspectjweaver</artifactId>
+		<version>1.8.5</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-tx</artifactId>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-jdbc</artifactId>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-web</artifactId>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-webmvc</artifactId>
+	</dependency>
+	
+	<dependency>
+		<groupId>mysql</groupId>
+		<artifactId>mysql-connector-java</artifactId>
+		<version>5.1.35</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>commons-dbcp</groupId>
+		<artifactId>commons-dbcp</artifactId>
+		<version>1.4</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.mybatis</groupId>
+        <artifactId>mybatis</artifactId>
+        <version>3.2.8</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.mybatis</groupId>
+		<artifactId>mybatis-spring</artifactId>
+		<version>1.2.3</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.projectlombok</groupId>
+		<artifactId>lombok</artifactId>
+		<version>1.16.4</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>javax.persistence</groupId>
+		<artifactId>persistence-api</artifactId>
+		<version>1.0.2</version>
+	</dependency>
+
+	<dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>1.2.14</version>
+    </dependency>
+    
+    <!-- Spring测试支撑. -->
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-test</artifactId>
+	</dependency>
+	
+  </dependencies>
+  
+  <!-- 统一设置所有插件的编码格式为UTF-8 -->
+  <properties>
+  	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+ 
+  <build>
+  	<resources>
+  		<resource>
+  			<directory>src/main/resources/</directory>
+  			<!--  可通过从系统属性、项目中的properties文件或者命令行中的取值过滤配置文件中${...}占位符 -->
+  			<filtering>true</filtering>
+  		</resource>
+  	</resources>
+  </build>
+  
+  <profiles>
+  	<!-- MySQL 数据库连接信息 -->
+  	<profile>
+  		<id>mysql_dev</id>
+  		<activation>
+  			<activeByDefault>true</activeByDefault>
+  		</activation>
+  		<properties>
+  			<database.username>root</database.username>
+  			<database.password>root</database.password>
+  			<database.url>
+  				<![CDATA[jdbc:mysql://127.0.0.1:3306/small_shop_selling?useUnicode=true&amp;characterEncoding=utf-8]]>
+  			</database.url>
+  			<database.driver.class>com.mysql.jdbc.Driver</database.driver.class>
+  		</properties>
+  	</profile>
+  	<!-- Oracle 数据库连接信息 -->
+  	<profile>
+  		<id>oracle_dev</id>
+  		<activation>
+  			<activeByDefault>false</activeByDefault>
+  		</activation>
+  		<properties>
+  			<database.username>proj</database.username>
+  			<database.password>proj</database.password>
+  			<database.url>
+  				<![CDATA[jdbc:oracle:thin:@127.0.0.1:1521:MYORCL]]>
+  			</database.url>
+  			<database.driver.class>oracle.jdbc.driver.OracleDriver</database.driver.class>
+  		</properties>
+  	</profile>
+  	
+  </profiles>
+  
+</project>
