@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:jms="http://www.springframework.org/schema/jms" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+	   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+	   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
+	   http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
+	   http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd
+	   http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd
+	   http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-4.1.xsd">
+
+	<!-- 启动 @AspectJ基于XML配置文件 -->
+	<aop:aspectj-autoproxy/>
+	
+	<!-- 支持spring注解配置 . -->
+	<context:component-scan base-package="com.bss.proj.controller;com.bss.proj.service.impl" />
+	
+	<!-- 创建默认的 JtaTransactionManager bean 名字为 "transactionManager"(当需要使用分布式事务时) -->
+	<!-- <tx:jta-transaction-manager /> -->
+	
+	<!--解析 MavenProject: proj.bss.com:com.bss.proj:0.0.1-SNAPSHOT @ E:\\WORK\\EclipseWorkSpace\\com.bss.proj\\pom.xml 占位符，由本地 properties文件 或者系统 properties或者environment变量替代.
+		也可以使用‘<context:property-placeholder/>’命名空间元素实例化PropertyPlaceholderConfigurer对象.-->
+	<bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" >
+		<property name="fileEncoding" value="UTF-8" />
+		<property name="locations">
+			<array>
+				<value>classpath:/config/app/app-constants.properties</value>
+				<value>classpath:/config/datasource/dbcp.properties</value>
+			</array>
+		</property>
+	</bean>
+	
+	<!-- DBCP 数据池 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="username" value="${username}"/>
+		<property name="password" value="${password}"/>
+		<property name="url" value="${url}"/>
+		<property name="defaultTransactionIsolation" value="${defaultTransactionIsolation}"/>
+		<property name="validationQueryTimeout" value="${defaultQueryTimeout}"/>
+		<property name="initialSize" value="${initialSize}"/>
+		<property name="maxActive" value="${maxTotal}"/>
+		<property name="maxIdle" value="${maxIdle}"/>
+		<property name="minIdle" value="${minIdle}"/>
+		<property name="maxWait" value="${maxWaitMillis}"/>
+	</bean>
+	
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+  		<property name="dataSource" ref="dataSource" />
+  		<property name="transactionFactory" >
+  			<bean class="org.apache.ibatis.transaction.managed.ManagedTransactionFactory" />
+  		</property>
+  		<!-- 设置本地MyBatis的配置文件 -->
+  		<property name="configLocation" value="classpath:config/mybatis/mybatis-configuration.xml" />
+  		<!-- 搜索类型别名的base包. -->
+  		<property name="typeAliasesPackage" value="com.bss.proj.endity" />
+  		<!-- Set locations of MyBatis mapper files that are going to be merged into the SqlSessionFactory configuration at runtime -->
+  		<property name="mapperLocations" value="classpath:config/mybatis/mappers/*Mapper.xml" />
+	</bean>
+	
+	<!-- MyBatis接口映射器的扫描配置类 -->
+	<bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!-- 设置你的MyBatis接口映射器的Base包 ，你也可以设置更多的Base包路径通过‘;’和‘,’进行分割-->
+		<property name="basePackage" value="com.bss.proj.dao" />
+		<!-- 通过此sqlSessionFactory属性注入将会先实例化数据源，从而使占位符未能提前解析
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" /> -->
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 使用 Spring's JDBC 事务管理器 . -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" >
+		<property name="dataSource" ref="dataSource" />
+		<!-- Transaction timeout in seconds . -->
+		<property name="defaultTimeout" value="30" />
+	</bean>
+	
+	<!-- 指示事务配置可使用java 5注解类进行定义，并且代理将被自动创建针对相关的注解Bean，默认的注解也支持Spring的@Transactional.
+		例如Propagation，Isolation，Rollback规则等的事务配置语法-->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+	    <tx:attributes>
+	    	<!-- all methods starting with 'get'|'find' are read-only -->
+            <tx:method name="get*" read-only="true"/>
+            <tx:method name="find*" read-only="true"/>
+            <!-- other methods use the default transaction settings -->
+            <tx:method name="*" read-only="false" propagation="REQUIRED" rollback-for="java.lang.RuntimeException"/>
+	    </tx:attributes>
+	</tx:advice>
+	
+	<!-- 定义Spring事务切入点 -->
+    <aop:config>
+        <aop:pointcut id="serviceOperation" expression="execution(* com.bss.proj.service.impl.*.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation"/>
+    </aop:config>
+	<!-- Spring的MVC相关配置 -->
+	<import resource="application-servlet.xml"/>
+	
+</beans>

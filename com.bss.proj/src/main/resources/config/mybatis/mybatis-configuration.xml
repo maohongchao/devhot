@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+ 
+ <configuration>
+ 
+ 	<!-- MyBatis属性配置 -->
+ 	<properties resource="config/datasource/dbcp.properties" />
+ 	
+ 	<settings>
+ 		<!-- 该配置影响的所有映射器中配置的缓存的全局开关 -->
+ 		<setting name="cacheEnabled" value="true"/>
+ 		<!-- 延迟加载的全局开关。当开启时，所有关联对象都会延迟加载。 特定关联关系中可通过设置fetchType属性来覆盖该项的开关状态。默认为false -->
+ 		<setting name="lazyLoadingEnabled" value="true"/>
+ 		<!-- 当启用时，对任意延迟属性的调用会使带有延迟加载属性的对象完整加载；反之，每种属性将会按需加载。默认为true -->
+ 		<setting name="aggressiveLazyLoading" value="false"/>
+ 		<!-- 指定 MyBatis 应如何自动映射列到字段或属性。 NONE 表示取消自动映射；PARTIAL 只会自动映射没有定义嵌套结果集映射的结果集。
+ 		 FULL 会自动映射任意复杂的结果集（无论是否嵌套） 。默认为 PARTIAL-->
+ 		<setting name="autoMappingBehavior" value="FULL"/>
+ 		<!-- 是否开启自动驼峰命名规则（camel case）映射，即从经典数据库列名 A_COLUMN 到经典 Java 属性名 aColumn 的类似映射。默认为false -->
+ 		<setting name="mapUnderscoreToCamelCase" value="true"/>
+ 		<!-- 指定 MyBatis 所用日志的具体实现，未指定时将自动查找。按如下顺序SLF4J，Commons Logging，Log4j 2，Log4j -->
+ 		<setting name="logImpl" value="LOG4J"/>
+ 		<!-- 指定 MyBatis 增加到日志名称的前缀。 -->
+ 		<setting name="logPrefix" value="==>MyBatis:"/>
+ 	</settings>
+ 	
+ 	<!-- 实体类的别名设置 -->
+ 	<typeAliases>
+ 		<package name="com.bss.proj.entity"/>
+ 	</typeAliases>
+ 	
+ 	<!-- 当使用spring管理连接池，此配置将会被忽略 -->
+ 	<environments default="development">
+ 		<environment id="development">
+ 			<transactionManager type="JDBC"/>
+ 			<!-- 数据库连接池 -->
+ 			<dataSource type="POOLED">
+ 				<property name="driver" value="${driverClassName}"/>
+        		<property name="url" value="${url}"/>
+        		<property name="username" value="${username}"/>
+        		<property name="password" value="${password}"/>
+        		<property name="poolMaximumActiveConnections" value="${maxTotal}"/>
+        		<property name="poolMaximumIdleConnections" value="${maxIdle}"/>
+        		<!-- 在被强制返回之前，池中连接被检出（checked out）时间（过期时间，过期则重新创建），也就是说当活动连接池已满，不能创建时，取出活动连接池的第一个，
+        		即最先进入连接池的Connection对象， 计算它的校验时间，如果校验时间大于此设置的最大检出时间，则认为它已经过期了，则重新生成一个PooledConnection。默认值：20000 毫秒  -->
+        		<property name="poolMaximumCheckoutTime" value="30000"/>
+        		<!-- 如果获取连接花费的相当长的时间，它会给连接池打印状态日志并重新尝试获取一个连接（当池中没有可用连接时[达到大活动连接数]当前线程等待时间），默认值：20000 毫秒。 -->
+        		<property name="poolTimeToWait" value="20000"/>
+ 			</dataSource>
+ 		</environment>
+ 	</environments>
+ 	
+ 	<!-- 可以根据不同的数据库厂商执行不同的语句,实现在不同数据库之间自由切换，这种多厂商的支持是基于映射语句中的 databaseId 属性。
+ 	 MyBatis 会加载不带 databaseId 属性和带有匹配当前数据库 databaseId 属性的所有语句。
+ 	  如果同时找到带有 databaseId 和不带 databaseId 的相同语句，则后者会被舍弃 -->
+ 	<databaseIdProvider type="DB_VENDOR">
+        <property name="Oracle" value="oracle" />
+ 		<property name="MySQL" value="mysql" />
+	</databaseIdProvider>
+ 	
+ </configuration>
