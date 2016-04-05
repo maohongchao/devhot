@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>生成第三方借款协议</title>
+
+<script type="text/javascript">
+	function dosubmit() {
+		var form = document.pdfForm;
+		if (form.borrowNids.value.trim() == "") {
+			form.borrowNids.style.border = "1px solid red";
+			form.borrowNids.focus();
+			return false;
+		}
+		var tender = form.tender.value.trim();
+		var tenderID = form.tenderID.value.trim();
+		var tenderPhone = form.tenderPhone.value.trim();
+		var path = form.path.value.trim();
+		if (tender != '' || tenderID != '' || tenderPhone != '') {
+			if (tender == '') {
+				form.tender.style.border = "1px solid red";
+				form.tender.focus();
+				return false;
+			}
+			if (tenderID == '') {
+				form.tenderID.style.border = "1px solid red";
+				form.tenderID.focus();
+				return false;
+			}
+			if (tenderPhone == '') {
+				form.tenderPhone.style.border = "1px solid red";
+				form.tenderPhone.focus();
+				return false;
+			}
+		}
+		if (path == '') {
+			form.path.style.border = "1px solid red";
+			form.path.focus();
+			return false;
+		}
+		form.subButton.value = "正在生成中...";
+		form.subButton.disabled="disabled";
+		return true;
+	}
+</script>
+
+</head>
+<body>
+	<div style="border: 1px solid silver; width: 800px;">
+		<div style="text-align:center;	">
+			<h3><strong>生成第三方借款协议</strong></h3>
+		</div>
+		<form name="pdfForm" action="pdf/generate" method="post"
+			onsubmit="return dosubmit();">
+			<div
+				style="float: left; width: 380px; border-right: 1px solid silver; margin-top: 20px;">
+				<span style="float: left;">批量借款单号:</span>
+				<div style="float: left;">
+					<textarea name="borrowNids" cols="30" rows="30"
+						onchange="javascript:this.style.border=''"></textarea>
+					<span style="color: red;">*</span>
+				</div>
+				<div style="clear: both;"></div>
+			</div>
+			<div
+				style="float: left; text-align: left; padding-left: 10px; margin-top: 20px;">
+				<span style="float: left;">指定理财人：</span>
+				<div style="float: left;">
+					理财人：<input type="text" name="tender" value="段海鸣"
+						onchange="javascript:this.style.border=''" />
+					<p>
+						理财人身份证：<input type="text" name="tenderID" value="310110198105035611"
+							onchange="javascript:this.style.border=''" />
+					</p>
+					<p>
+						理财人电话：<input type="text" name="tenderPhone" value="18930433942"
+							onchange="javascript:this.style.border=''" /><br />
+					</p>
+				</div>
+				<div style="clear: both;"></div>
+			</div>
+			<div style="clear: both;"></div>
+			<p></p>
+			<div>
+				指定生成的目录: <input type="text" name="path" size="40"
+					value="C:\Users\maohongzhao\Desktop\pdfAgreement"
+					onchange="javascript:this.style.border=''" /> <span
+					style="color: silver;">可手动修改指定路径~</span><br />
+				<div style="width: 100%; text-align: center;">
+					<p>
+						<input type="submit" name="subButton" value="生成第三方PDF借款协议" />
+					</p>
+				</div>
+			</div>
+			<p>
+		</form>
+	</div>
+</body>
+</html>
